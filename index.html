@@ -110,6 +110,41 @@ button:disabled{opacity:.5;cursor:not-allowed;transform:none!important;box-shado
 .mp-stat .mp-lbl{font-size:10px;color:var(--text-mute);text-transform:uppercase;letter-spacing:.5px;margin-top:2px;}
 .mp-actions{display:flex;flex-direction:column;gap:8px;margin-left:auto;}
 
+/* DATA LOGGER */
+.dl-toolbar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:16px;}
+.dl-toolbar select,.dl-toolbar input[type="date"]{padding:8px 11px;border:1.5px solid var(--border);border-radius:7px;font-size:13px;font-family:inherit;background:#fff;}
+.dl-toolbar select:focus,.dl-toolbar input:focus{outline:none;border-color:var(--ptc-navy-2);}
+.dl-table-wrap{background:#fff;border-radius:12px;border:1px solid var(--border);overflow:hidden;box-shadow:var(--shadow-sm);}
+.dl-table{width:100%;border-collapse:collapse;font-size:12.5px;}
+.dl-table th{text-align:left;padding:9px 12px;font-size:10px;color:var(--text-mute);text-transform:uppercase;letter-spacing:.5px;border-bottom:2px solid var(--border);background:#f8fafc;white-space:nowrap;}
+.dl-table td{padding:7px 12px;border-bottom:1px solid #f1f5f9;vertical-align:middle;}
+.dl-table tr:last-child td{border-bottom:none;}
+.dl-table tr:hover td{background:#f8fafc;}
+.dl-edit-input{width:80px;padding:5px 7px;border:1.5px solid var(--ptc-navy-2);border-radius:5px;font-size:12px;font-family:inherit;font-weight:700;}
+.dl-edit-input:focus{outline:none;border-color:var(--ptc-red);box-shadow:0 0 0 2px rgba(200,16,46,.1);}
+.dl-empty{text-align:center;padding:40px;color:var(--text-mute);font-size:13px;}
+.dl-stats{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px;}
+.dl-stat-chip{background:#eff6ff;padding:7px 14px;border-radius:8px;font-size:12px;font-weight:700;color:var(--ptc-navy);border:1px solid #bfdbfe;}
+
+/* ACTION POINTS ENTRY */
+.ap-section{margin-top:24px;}
+.ap-form-card{background:#fff;border-radius:12px;border:1px solid var(--border);padding:18px 20px;margin-bottom:16px;box-shadow:var(--shadow-sm);}
+.ap-form-card h3{font-size:14px;font-weight:700;color:var(--ptc-navy);margin-bottom:14px;display:flex;align-items:center;gap:8px;}
+.ap-form-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:12px;}
+.ap-form-grid-2{display:grid;grid-template-columns:2fr 1fr 1fr auto;gap:12px;align-items:end;margin-bottom:0;}
+.ap-label{display:block;font-size:10px;font-weight:700;color:var(--text-mute);text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px;}
+.ap-input{width:100%;padding:8px 11px;border:1.5px solid var(--border);border-radius:7px;font-size:13px;font-family:inherit;transition:border-color .2s;background:#fff;}
+.ap-input:focus{outline:none;border-color:var(--ptc-navy-2);box-shadow:0 0 0 3px rgba(26,75,140,.08);}
+.ap-table-wrap{background:#fff;border-radius:12px;border:1px solid var(--border);overflow:hidden;box-shadow:var(--shadow-sm);}
+.ap-table{width:100%;border-collapse:collapse;font-size:12.5px;}
+.ap-table th{text-align:left;padding:9px 10px;font-size:10px;color:var(--text-mute);text-transform:uppercase;letter-spacing:.5px;border-bottom:2px solid var(--border);background:#f8fafc;}
+.ap-table td{padding:8px 10px;border-bottom:1px solid #f1f5f9;vertical-align:middle;}
+.ap-table tr:last-child td{border-bottom:none;}
+.ap-table tr:hover td{background:#f8fafc;}
+.ap-stripe{display:inline-block;width:4px;height:20px;border-radius:2px;vertical-align:middle;margin-right:6px;}
+.ap-status-sel{padding:4px 8px;border-radius:8px;border:1px solid var(--border);font-size:11px;font-weight:700;font-family:inherit;cursor:pointer;background:#fff;}
+.ap-empty{text-align:center;padding:30px;color:var(--text-mute);font-size:13px;}
+
 /* ADMIN USER MANAGEMENT */
 #admin-view{min-height:100vh;padding-bottom:60px;}
 .admin-topbar{background:#fff;padding:10px 20px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:100;box-shadow:var(--shadow-sm);border-bottom:3px solid var(--ptc-navy);}
@@ -234,6 +269,7 @@ button:disabled{opacity:.5;cursor:not-allowed;transform:none!important;box-shado
     <button id="btn-entry" class="active">📋 Data Entry</button>
     <button id="btn-dashboard">📺 TV Dashboard</button>
     <button id="btn-admin" style="display:none">👤 Manage Users</button>
+    <button id="btn-datalog" style="display:none">🗃️ Data Logger</button>
     <div class="user-pill">
       <span id="ui-username">—</span>
       <span class="dept-chip" id="ui-dept">—</span>
@@ -278,6 +314,69 @@ button:disabled{opacity:.5;cursor:not-allowed;transform:none!important;box-shado
         <span style="font-size:11px;color:var(--text-mute);background:#fefce8;padding:5px 12px;border-radius:8px;border:1px solid #fde68a">🔒 Targets locked from master JSON</span>
       </div>
       <div id="departments"></div>
+
+      <!-- ACTION POINTS SECTION -->
+      <div class="ap-section" id="ap-section">
+        <div class="section-title">
+          <h2>⚡ Action Points <span class="badge-count" id="ap-count">0</span></h2>
+          <span style="font-size:11px;color:var(--text-mute);background:#fefce8;padding:5px 12px;border-radius:8px;border:1px solid #fde68a">Visible on TV Dashboard per department</span>
+        </div>
+        <!-- Add Action Form -->
+        <div class="ap-form-card">
+          <h3>➕ Add New Action Point</h3>
+          <div class="ap-form-grid">
+            <div>
+              <label class="ap-label">Department</label>
+              <select id="ap-dept" class="ap-input">
+                <option value="">Select department…</option>
+              </select>
+            </div>
+            <div>
+              <label class="ap-label">Owner</label>
+              <input type="text" id="ap-owner" class="ap-input" placeholder="e.g. Arun Kumar">
+            </div>
+            <div>
+              <label class="ap-label">Due Date</label>
+              <input type="date" id="ap-due" class="ap-input">
+            </div>
+          </div>
+          <div class="ap-form-grid-2">
+            <div>
+              <label class="ap-label">Action Description</label>
+              <input type="text" id="ap-text" class="ap-input" placeholder="Describe the action point…">
+            </div>
+            <div>
+              <label class="ap-label">Status</label>
+              <select id="ap-status" class="ap-input">
+                <option value="open">Open</option>
+                <option value="progress">In Progress</option>
+                <option value="done">Done</option>
+              </select>
+            </div>
+            <div style="display:none"><!-- reserved --></div>
+            <div>
+              <button class="btn-success btn-big" id="btn-add-ap" style="white-space:nowrap;margin-top:18px">➕ Add Action</button>
+            </div>
+          </div>
+        </div>
+        <!-- Action Points Table -->
+        <div class="ap-table-wrap">
+          <table class="ap-table">
+            <thead>
+              <tr>
+                <th>Status</th>
+                <th>Department</th>
+                <th>Action</th>
+                <th>Owner</th>
+                <th>Due Date</th>
+                <th>Change Status</th>
+                <th>Delete</th>
+              </tr>
+            </thead>
+            <tbody id="ap-tbody"></tbody>
+          </table>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -343,6 +442,71 @@ button:disabled{opacity:.5;cursor:not-allowed;transform:none!important;box-shado
           </thead>
           <tbody id="users-tbody"></tbody>
         </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- DATA LOGGER VIEW -->
+  <div id="datalog-view" class="view">
+    <div class="admin-topbar">
+      <div class="brand-block">
+        <div>
+          <h1 style="font-size:16px;font-weight:700;color:var(--ptc-navy)">🗃️ Data Logger</h1>
+          <div style="font-size:11px;color:var(--text-mute)">View, edit and delete past KPI entries (Admin only)</div>
+        </div>
+      </div>
+    </div>
+    <div class="entry-container">
+      <div class="info-note">
+        <b>Data Logger:</b> Browse all saved KPI entries. You can edit actual values inline or delete entire date+department records. Changes are saved directly to Firebase.
+      </div>
+
+      <!-- Filters -->
+      <div class="dl-toolbar">
+        <div>
+          <label style="font-size:10px;font-weight:700;color:var(--text-mute);text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:4px">Department</label>
+          <select id="dl-filter-dept">
+            <option value="">All Departments</option>
+          </select>
+        </div>
+        <div>
+          <label style="font-size:10px;font-weight:700;color:var(--text-mute);text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:4px">From Date</label>
+          <input type="date" id="dl-filter-from">
+        </div>
+        <div>
+          <label style="font-size:10px;font-weight:700;color:var(--text-mute);text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:4px">To Date</label>
+          <input type="date" id="dl-filter-to">
+        </div>
+        <div style="align-self:flex-end">
+          <button class="btn-navy btn-big" id="btn-dl-load">🔍 Load Data</button>
+        </div>
+        <div style="align-self:flex-end">
+          <button class="btn-secondary" id="btn-dl-clear-filter">✕ Clear</button>
+        </div>
+        <div style="margin-left:auto;align-self:flex-end">
+          <button class="btn-primary btn-sm" id="btn-dl-export">📊 Export CSV</button>
+        </div>
+      </div>
+
+      <!-- Stats -->
+      <div class="dl-stats" id="dl-stats"></div>
+
+      <!-- Records grouped by date+dept -->
+      <div id="dl-records"></div>
+
+      <!-- Edit Modal -->
+      <div id="dl-edit-modal" style="display:none;position:fixed;inset:0;background:rgba(15,23,42,.55);z-index:20000;align-items:center;justify-content:center;">
+        <div style="background:#fff;border-radius:14px;width:520px;max-width:95vw;box-shadow:0 12px 40px rgba(15,41,72,.2);overflow:hidden;">
+          <div style="padding:16px 22px;background:linear-gradient(135deg,var(--ptc-navy),var(--ptc-navy-2));color:#fff;display:flex;justify-content:space-between;align-items:center;">
+            <div style="font-size:15px;font-weight:700">✏️ Edit KPI Entry</div>
+            <button onclick="closeDlEditModal()" style="background:transparent;border:none;color:#fff;font-size:22px;cursor:pointer;line-height:1;padding:0">×</button>
+          </div>
+          <div style="padding:22px;" id="dl-edit-body"></div>
+          <div style="padding:14px 22px;background:#f8fafc;border-top:1px solid var(--border);display:flex;gap:10px;justify-content:flex-end;">
+            <button class="btn-secondary" onclick="closeDlEditModal()">Cancel</button>
+            <button class="btn-success btn-big" id="btn-dl-save-edit">💾 Save Changes</button>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -1246,6 +1410,7 @@ function onLoginSuccess(){
   document.getElementById("ui-username").textContent=CURRENT_USER.username;
   document.getElementById("ui-dept").textContent=IS_ADMIN?"🔑 Admin":(USER_DEPT||"Unassigned");
   if(IS_ADMIN) document.getElementById("btn-admin").style.display="";
+  if(IS_ADMIN) document.getElementById("btn-datalog").style.display="";
   document.getElementById("entryDate").value=todayISO();
   loadData().then(()=>{ renderEntry(); });
   startClock();
@@ -1346,6 +1511,7 @@ async function loadData(){
   }catch(e){}
   rebuildTrends();
   updateMonthPanel();
+  await loadActions();
 }
 
 // ── DATA SAVE ──────────────────────────────────────────────────
@@ -1377,6 +1543,100 @@ async function saveAll(){
   for(const d of depts) await saveDept(d.name);
   showToast("✅ All saved!"); btn.disabled=false; btn.textContent="💾 Save All Entries";
 }
+
+// ── ACTION POINTS ──────────────────────────────────────────────
+async function loadActions(){
+  try{
+    const snap=await db.ref("actions").get();
+    if(snap.exists()){ LIVE_DATA.actions=Object.values(snap.val()||{}); }
+    else{ LIVE_DATA.actions=KPI_MASTER.actions?[...KPI_MASTER.actions]:[]; }
+  }catch(e){ LIVE_DATA.actions=KPI_MASTER.actions?[...KPI_MASTER.actions]:[]; }
+}
+
+async function saveActions(){
+  const obj={};
+  (LIVE_DATA.actions||[]).forEach(a=>{ obj[a.id]=a; });
+  await db.ref("actions").set(obj);
+}
+
+function renderActions(){
+  if(!LIVE_DATA) return;
+  const actions=LIVE_DATA.actions||[];
+  const tbody=document.getElementById("ap-tbody");
+  const countEl=document.getElementById("ap-count");
+  if(!tbody) return;
+  countEl.textContent=actions.length;
+  // Populate dept select
+  const deptSel=document.getElementById("ap-dept");
+  if(deptSel){
+    const depts=IS_ADMIN?LIVE_DATA.departments:LIVE_DATA.departments.filter(d=>d.name===USER_DEPT);
+    const cur=deptSel.value;
+    deptSel.innerHTML='<option value="">Select department…</option>'+depts.map(d=>`<option value="${escHtml(d.name)}" ${d.name===cur?"selected":""}>${escHtml(d.name)}</option>`).join("");
+  }
+  if(!actions.length){
+    tbody.innerHTML=`<tr><td colspan="7" class="ap-empty">No action points yet. Add one above. ⚡</td></tr>`;
+    return;
+  }
+  // Sort: open first, then progress, then done; then by due date
+  const order={open:0,progress:1,done:2};
+  const sorted=[...actions].sort((a,b)=>(order[a.status]||0)-(order[b.status]||0)||(a.due||"").localeCompare(b.due||""));
+  const stripColor={open:"var(--bad)",progress:"var(--warn)",done:"var(--good)"};
+  const statusLabel={open:"Open",progress:"In Progress",done:"Done"};
+  tbody.innerHTML=sorted.map(a=>`
+    <tr>
+      <td><span class="ap-stripe" style="background:${stripColor[a.status]||"#ccc"}"></span><span class="status-pill s-${a.status==="open"?"bad":a.status==="progress"?"warn":"good"}">${statusLabel[a.status]||a.status}</span></td>
+      <td style="font-weight:600;color:var(--ptc-navy)">${escHtml(a.dept||"—")}</td>
+      <td style="max-width:340px">${escHtml(a.text||"")}</td>
+      <td style="color:var(--text-mute)">👤 ${escHtml(a.owner||"—")}</td>
+      <td style="color:var(--text-mute)">${a.due?formatISO(a.due):"No due"}</td>
+      <td>
+        <select class="ap-status-sel" data-apid="${escHtml(a.id)}" onchange="changeApStatus('${escHtml(a.id)}',this.value)">
+          <option value="open" ${a.status==="open"?"selected":""}>Open</option>
+          <option value="progress" ${a.status==="progress"?"selected":""}>In Progress</option>
+          <option value="done" ${a.status==="done"?"selected":""}>Done</option>
+        </select>
+      </td>
+      <td><button class="btn-danger btn-sm" onclick="deleteAction('${escHtml(a.id)}')">🗑</button></td>
+    </tr>`).join("");
+}
+
+async function changeApStatus(id,newStatus){
+  const a=(LIVE_DATA.actions||[]).find(x=>x.id===id);
+  if(!a) return;
+  a.status=newStatus;
+  await saveActions();
+  renderActions();
+  showToast("✅ Status updated");
+}
+
+async function deleteAction(id){
+  if(!confirm("Delete this action point?")) return;
+  LIVE_DATA.actions=(LIVE_DATA.actions||[]).filter(x=>x.id!==id);
+  await saveActions();
+  renderActions();
+  showToast("🗑 Action deleted");
+}
+
+document.getElementById("btn-add-ap")?.addEventListener("click", async()=>{
+  const dept=document.getElementById("ap-dept").value;
+  const text=document.getElementById("ap-text").value.trim();
+  const owner=document.getElementById("ap-owner").value.trim();
+  const due=document.getElementById("ap-due").value;
+  const status=document.getElementById("ap-status").value;
+  if(!dept){showToast("Select a department","bad");return;}
+  if(!text){showToast("Enter action description","bad");return;}
+  const id="a_"+Date.now().toString(36)+Math.random().toString(36).slice(2,7);
+  const action={id,text,dept,owner,due,status,created:todayISO()};
+  if(!LIVE_DATA.actions) LIVE_DATA.actions=[];
+  LIVE_DATA.actions.push(action);
+  await saveActions();
+  document.getElementById("ap-text").value="";
+  document.getElementById("ap-owner").value="";
+  document.getElementById("ap-due").value="";
+  document.getElementById("ap-status").value="open";
+  renderActions();
+  showToast("✅ Action point added");
+});
 
 // ── RENDER ENTRY ───────────────────────────────────────────────
 function renderEntry(){
@@ -1439,6 +1699,7 @@ function renderEntry(){
       else{showToast("❌ Failed","bad");btn.disabled=false;btn.textContent="💾 Save Entry";}
     });
   });
+  renderActions();
 }
 
 // ── MONTHLY LOG ────────────────────────────────────────────────
@@ -1500,6 +1761,208 @@ function exportCSV(){
   log.forEach(e=>{csv+=[[e.date,e.dept,e.kpi,e.actual,e.target,e.unit,e.lowerBetter?"Yes":"No",e.status].map(x=>`"${String(x==null?"":x).replace(/"/g,'\"\"')}"`).join(",")]+"\r\n";});
   const a=document.createElement("a"); a.href=URL.createObjectURL(new Blob([csv],{type:"text/csv"})); a.download=`ptc-kpis-${currentMonthKey()}.csv`; a.click();
 }
+
+// ── DATA LOGGER ────────────────────────────────────────────────
+let DL_RECORDS = []; // flat list of {date, dept, fbKey, kpis:[]}
+let DL_EDIT_STATE = null;
+
+async function loadDataLogger(){
+  const fromDate = document.getElementById("dl-filter-from").value;
+  const toDate   = document.getElementById("dl-filter-to").value;
+  const deptF    = document.getElementById("dl-filter-dept").value;
+  const recEl    = document.getElementById("dl-records");
+  const statsEl  = document.getElementById("dl-stats");
+  recEl.innerHTML = `<div class="dl-empty">⏳ Loading data from Firebase…</div>`;
+  statsEl.innerHTML = "";
+  DL_RECORDS = [];
+  try {
+    const snap = await db.ref("entries").get();
+    if(!snap.exists()){ recEl.innerHTML=`<div class="dl-empty">No saved entries found.</div>`; return; }
+    const raw = snap.val();
+    Object.entries(raw).forEach(([fbKey, val])=>{
+      if(!val||!val.date||!val.dept) return;
+      if(fromDate && val.date < fromDate) return;
+      if(toDate   && val.date > toDate)   return;
+      if(deptF    && val.dept !== deptF)  return;
+      DL_RECORDS.push({ fbKey, date:val.date, dept:val.dept, savedBy:val.savedBy||"—", savedAt:val.savedAt||0, kpis:val.kpis||[] });
+    });
+  } catch(e){ recEl.innerHTML=`<div class="dl-empty">❌ Error loading data: ${e.message}</div>`; return; }
+
+  DL_RECORDS.sort((a,b)=>b.date.localeCompare(a.date)||a.dept.localeCompare(b.dept));
+
+  // Stats
+  const uniqueDates=[...new Set(DL_RECORDS.map(r=>r.date))];
+  const uniqueDepts=[...new Set(DL_RECORDS.map(r=>r.dept))];
+  const totalKpis=DL_RECORDS.reduce((s,r)=>s+r.kpis.length,0);
+  statsEl.innerHTML=`
+    <div class="dl-stat-chip">📅 ${uniqueDates.length} Days</div>
+    <div class="dl-stat-chip">🏭 ${uniqueDepts.length} Departments</div>
+    <div class="dl-stat-chip">📊 ${DL_RECORDS.length} Records</div>
+    <div class="dl-stat-chip">🔢 ${totalKpis} KPI Entries</div>`;
+
+  if(!DL_RECORDS.length){ recEl.innerHTML=`<div class="dl-empty">No records match your filters.</div>`; return; }
+  renderDataLogger();
+}
+
+function renderDataLogger(){
+  const recEl = document.getElementById("dl-records");
+  recEl.innerHTML = "";
+  DL_RECORDS.forEach((rec,ri)=>{
+    const card = document.createElement("div");
+    card.className = "card";
+    card.style.cssText = "margin-bottom:14px;overflow:hidden;";
+    const savedTime = rec.savedAt ? new Date(rec.savedAt).toLocaleString("en-GB",{day:"2-digit",month:"short",year:"numeric",hour:"2-digit",minute:"2-digit"}) : "—";
+    let rows="";
+    rec.kpis.forEach((k,ki)=>{
+      const st=classify(k);
+      rows+=`<tr>
+        <td style="padding:6px 10px;font-size:12.5px;font-weight:600">${escHtml(k.title||"")}</td>
+        <td style="padding:6px 10px;font-size:12.5px;font-weight:800;color:var(--ptc-navy)">${k.actual}</td>
+        <td style="padding:6px 10px;font-size:12px;color:var(--text-mute)">${k.target}</td>
+        <td style="padding:6px 10px;font-size:12px;color:var(--text-mute)">${escHtml(k.unit||"")}</td>
+        <td style="padding:6px 10px"><span class="status-pill s-${st.cls}">${st.label}</span></td>
+        <td style="padding:6px 10px">
+          <button class="btn-secondary btn-sm" onclick="openDlEditModal(${ri},${ki})">✏️ Edit</button>
+        </td>
+      </tr>`;
+    });
+    card.innerHTML=`
+      <div style="padding:12px 16px;background:#fff;display:flex;align-items:center;justify-content:space-between;border-bottom:2px solid var(--ptc-navy);flex-wrap:wrap;gap:8px;">
+        <div style="display:flex;align-items:center;gap:12px">
+          <span style="font-size:16px;font-weight:800;color:var(--ptc-navy)">${formatISO(rec.date)}</span>
+          <span class="dept-chip">${escHtml(rec.dept)}</span>
+          <span style="font-size:11px;color:var(--text-mute)">Saved by <b>${escHtml(rec.savedBy)}</b> at ${savedTime}</span>
+        </div>
+        <div style="display:flex;gap:8px;">
+          <button class="btn-secondary btn-sm" onclick="openDlEditAllModal(${ri})">✏️ Edit All KPIs</button>
+          <button class="btn-danger btn-sm" onclick="deleteDataLoggerRecord(${ri})">🗑 Delete Record</button>
+        </div>
+      </div>
+      <div style="overflow-x:auto">
+        <table class="dl-table">
+          <thead><tr><th>KPI</th><th>Actual</th><th>Target</th><th>Unit</th><th>Status</th><th>Action</th></tr></thead>
+          <tbody>${rows}</tbody>
+        </table>
+      </div>`;
+    recEl.appendChild(card);
+  });
+}
+
+function openDlEditModal(ri, ki){
+  const rec=DL_RECORDS[ri], k=rec.kpis[ki];
+  DL_EDIT_STATE={ri,ki,single:true};
+  document.getElementById("dl-edit-body").innerHTML=`
+    <div style="margin-bottom:12px;font-size:13px;color:var(--text-mute)">${formatISO(rec.date)} — <b>${escHtml(rec.dept)}</b></div>
+    <div style="font-size:14px;font-weight:700;color:var(--ptc-navy);margin-bottom:16px">${escHtml(k.title)}</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+      <div>
+        <label class="ap-label">Actual Value</label>
+        <input type="number" id="dl-edit-actual" class="ap-input" value="${k.actual}" step="any">
+      </div>
+      <div>
+        <label class="ap-label">Target Value</label>
+        <input type="number" id="dl-edit-target" class="ap-input" value="${k.target}" step="any">
+      </div>
+    </div>`;
+  document.getElementById("dl-edit-modal").style.display="flex";
+}
+
+function openDlEditAllModal(ri){
+  const rec=DL_RECORDS[ri];
+  DL_EDIT_STATE={ri,ki:null,single:false};
+  let fields=rec.kpis.map((k,ki)=>`
+    <div style="border:1px solid var(--border);border-radius:8px;padding:12px;margin-bottom:10px;">
+      <div style="font-size:12px;font-weight:700;color:var(--ptc-navy);margin-bottom:8px">${escHtml(k.title)}</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+        <div><label class="ap-label">Actual</label><input type="number" class="ap-input dl-all-actual" data-ki="${ki}" value="${k.actual}" step="any"></div>
+        <div><label class="ap-label">Target</label><input type="number" class="ap-input dl-all-target" data-ki="${ki}" value="${k.target}" step="any"></div>
+      </div>
+    </div>`).join("");
+  document.getElementById("dl-edit-body").innerHTML=`
+    <div style="margin-bottom:14px;font-size:13px;color:var(--text-mute)">${formatISO(rec.date)} — <b>${escHtml(rec.dept)}</b> &nbsp;(${rec.kpis.length} KPIs)</div>
+    <div style="max-height:55vh;overflow-y:auto;padding-right:4px;">${fields}</div>`;
+  document.getElementById("dl-edit-modal").style.display="flex";
+}
+
+function closeDlEditModal(){
+  document.getElementById("dl-edit-modal").style.display="none";
+  DL_EDIT_STATE=null;
+}
+
+document.getElementById("btn-dl-save-edit")?.addEventListener("click", async()=>{
+  if(!DL_EDIT_STATE) return;
+  const {ri,ki,single}=DL_EDIT_STATE;
+  const rec=DL_RECORDS[ri];
+  if(single){
+    rec.kpis[ki].actual=parseFloat(document.getElementById("dl-edit-actual").value)||0;
+    rec.kpis[ki].target=parseFloat(document.getElementById("dl-edit-target").value)||0;
+  } else {
+    document.querySelectorAll(".dl-all-actual").forEach(inp=>{ rec.kpis[+inp.dataset.ki].actual=parseFloat(inp.value)||0; });
+    document.querySelectorAll(".dl-all-target").forEach(inp=>{ rec.kpis[+inp.dataset.ki].target=parseFloat(inp.value)||0; });
+  }
+  // Save back to Firebase entries node
+  const kpisToSave=rec.kpis.map(k=>({title:k.title,actual:k.actual,target:k.target,unit:k.unit||"",lowerBetter:!!k.lowerBetter}));
+  await db.ref("entries/"+rec.fbKey+"/kpis").set(kpisToSave);
+  // Also update monthly log
+  const mKey=rec.date.slice(0,7).replace("-","_");
+  const logRef=db.ref("monthlyLog/"+mKey+"/entries");
+  const logSnap=await logRef.get();
+  let existing=logSnap.exists()?logSnap.val():{};
+  Object.keys(existing).forEach(k=>{ if(existing[k].date===rec.date&&existing[k].dept===rec.dept) delete existing[k]; });
+  rec.kpis.forEach((k,i)=>{ existing[safeKey(rec.date)+"_"+safeKey(rec.dept)+"_"+i]={date:rec.date,dept:rec.dept,kpi:k.title,actual:k.actual,target:k.target,unit:k.unit||"",lowerBetter:!!k.lowerBetter,status:classify(k).label}; });
+  await logRef.set(existing);
+  showToast("✅ Entry updated");
+  closeDlEditModal();
+  renderDataLogger();
+});
+
+async function deleteDataLoggerRecord(ri){
+  const rec=DL_RECORDS[ri];
+  if(!confirm(`Delete ALL KPI data for ${formatISO(rec.date)} — ${rec.dept}?\n\nThis cannot be undone.`)) return;
+  await db.ref("entries/"+rec.fbKey).remove();
+  // Clean monthly log
+  const mKey=rec.date.slice(0,7).replace("-","_");
+  const logRef=db.ref("monthlyLog/"+mKey+"/entries");
+  const logSnap=await logRef.get();
+  if(logSnap.exists()){
+    let existing=logSnap.val();
+    Object.keys(existing).forEach(k=>{ if(existing[k].date===rec.date&&existing[k].dept===rec.dept) delete existing[k]; });
+    await logRef.set(existing);
+  }
+  DL_RECORDS.splice(ri,1);
+  showToast("🗑 Record deleted","bad");
+  if(!DL_RECORDS.length) document.getElementById("dl-records").innerHTML=`<div class="dl-empty">No records remaining.</div>`;
+  else renderDataLogger();
+}
+
+function dlExportCSV(){
+  if(!DL_RECORDS.length){alert("No data loaded. Click Load Data first.");return;}
+  let csv="Date,Department,KPI,Actual,Target,Unit,Status,Saved By\r\n";
+  DL_RECORDS.forEach(rec=>{
+    rec.kpis.forEach(k=>{
+      const st=classify(k).label;
+      csv+=[[rec.date,rec.dept,k.title,k.actual,k.target,k.unit||"",st,rec.savedBy].map(x=>`"${String(x==null?"":x).replace(/"/g,'""')}"`).join(",")]+"\r\n";
+    });
+  });
+  const a=document.createElement("a"); a.href=URL.createObjectURL(new Blob([csv],{type:"text/csv"})); a.download=`ptc-data-log-${todayISO()}.csv`; a.click();
+}
+
+// Populate dept filter for data logger
+function populateDlDeptFilter(){
+  const sel=document.getElementById("dl-filter-dept");
+  const cur=sel.value;
+  const depts=[...new Set((KPI_MASTER.departments||[]).map(d=>d.name))];
+  sel.innerHTML='<option value="">All Departments</option>'+depts.map(d=>`<option value="${escHtml(d)}" ${d===cur?"selected":""}>${escHtml(d)}</option>`).join("");
+}
+
+document.getElementById("btn-dl-load")?.addEventListener("click", loadDataLogger);
+document.getElementById("btn-dl-clear-filter")?.addEventListener("click",()=>{
+  document.getElementById("dl-filter-dept").value="";
+  document.getElementById("dl-filter-from").value="";
+  document.getElementById("dl-filter-to").value="";
+  loadDataLogger();
+});
+document.getElementById("btn-dl-export")?.addEventListener("click", dlExportCSV);
 
 // ── TV DASHBOARD ───────────────────────────────────────────────
 function destroyCharts(){chartInstances.forEach(c=>{try{c.destroy();}catch(e){}});chartInstances.length=0;}
@@ -1609,12 +2072,14 @@ function switchView(v){
   document.getElementById("btn-"+v)?.classList.add("active");
   if(v==="dashboard") buildDashboard();
   if(v==="admin") loadUsers();
+  if(v==="datalog"){ populateDlDeptFilter(); loadDataLogger(); }
 }
 
 // WIRE EVENTS
 document.getElementById("btn-entry").addEventListener("click",()=>switchView("entry"));
 document.getElementById("btn-dashboard").addEventListener("click",()=>switchView("dashboard"));
 document.getElementById("btn-admin").addEventListener("click",()=>switchView("admin"));
+document.getElementById("btn-datalog").addEventListener("click",()=>switchView("datalog"));
 document.getElementById("btn-goto-dash").addEventListener("click",()=>switchView("dashboard"));
 document.getElementById("btn-save-all").addEventListener("click",saveAll);
 document.getElementById("btn-view-log").addEventListener("click",openLogModal);
