@@ -1398,7 +1398,7 @@ function renderEntry(){
       rows+=`<tr>
         <td style="padding:5px 8px"><div style="font-size:12.5px;font-weight:600">${escHtml(k.title)}</div></td>
         <td style="width:130px;padding:4px 6px"><input type="number" value="${k.actual}" data-di="${di}" data-ki="${ki}" step="any" min="0"></td>
-        <td><span class="locked-cell">${k.target}</span></td>
+        <td style="width:130px;padding:4px 6px"><input type="number" value="${k.target}" data-di="${di}" data-ki="${ki}" data-field="target" step="any" min="0"></td>
         <td><span class="locked-cell">${escHtml(k.unit||"")}</span></td>
         <td><span class="locked-cell" style="font-size:11px">${escHtml(k.chartType||"gauge")}</span></td>
         <td style="text-align:center"><span class="locked-cell">${k.lowerBetter?"Yes":"No"}</span></td>
@@ -1415,7 +1415,7 @@ function renderEntry(){
       </div>
       <div class="dept-body">
         <table class="kpi-table">
-          <thead><tr><th>KPI Name</th><th style="width:130px">Actual ✏️</th><th>Target 🔒</th><th>Unit 🔒</th><th>Chart 🔒</th><th>↓ Better?</th><th>Status</th></tr></thead>
+          <thead><tr><th>KPI Name</th><th style="width:130px">Actual ✏️</th><th style="width:130px">Target ✏️</th><th>Unit 🔒</th><th>Chart 🔒</th><th>↓ Better?</th><th>Status</th></tr></thead>
           <tbody>${rows}</tbody>
         </table>
       </div>`;
@@ -1424,7 +1424,9 @@ function renderEntry(){
   });
   root.querySelectorAll("input[type=number][data-di]").forEach(inp=>{
     inp.addEventListener("change",e=>{
-      LIVE_DATA.departments[+e.target.dataset.di].kpis[+e.target.dataset.ki].actual=parseFloat(e.target.value)||0;
+      const di=+e.target.dataset.di, ki=+e.target.dataset.ki;
+      const field=e.target.dataset.field||"actual";
+      LIVE_DATA.departments[di].kpis[ki][field]=parseFloat(e.target.value)||0;
       renderEntry();
     });
   });
